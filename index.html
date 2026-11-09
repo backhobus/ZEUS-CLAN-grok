@@ -800,6 +800,15 @@
       .nav-row.nav-first { grid-template-columns: 1fr; }
     }
 
+    /* 모바일 메인 화면: 로고와 메뉴 묶음을 화면 중앙 쪽으로 아래 이동 */
+    @media (max-width: 767px) {
+      .header,
+      .right-panel {
+        position: relative;
+        top: clamp(64px, 12vh, 120px);
+      }
+    }
+
     @media (min-width: 768px) {
       .page { padding: 24px 24px 32px; }
       .logo-wrap { width: 200px; height: 200px; }
