@@ -49,12 +49,12 @@
       overflow-x: hidden;
     }
 
-    /* 텍스트/이미지 선택 방지 (입력칸 제외) */
     body {
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
+      -webkit-touch-callout: none;
     }
     input, textarea, [contenteditable] {
       -webkit-user-select: text !important;
@@ -63,12 +63,6 @@
       user-select: text !important;
     }
 
-    /* 우클릭 / 드래그 방지 */
-    body {
-      -webkit-touch-callout: none;
-    }
-
-    /* ===== 배경 효과 ===== */
     .bg-layer {
       position: fixed;
       inset: 0;
@@ -80,7 +74,6 @@
         linear-gradient(180deg, #05070d 0%, #0a0e1a 50%, #05070d 100%);
     }
 
-    /* ===== 번개 (실제 번개 형태, 노란색) ===== */
     .lightning {
       position: fixed;
       inset: 0;
@@ -122,34 +115,13 @@
       z-index: 1;
       background: radial-gradient(ellipse 90% 50% at 50% 0%, rgba(255, 245, 180, 0.28), transparent 60%);
       opacity: 0;
-      animation: none;
       transition: opacity 0.25s ease;
     }
     .lightning-flash.is-hidden {
       opacity: 0 !important;
-      animation: none !important;
       visibility: hidden;
     }
 
-    /* 짧고 날카로운 실제 번개 타이밍 */
-    @keyframes strike {
-      0%, 88%, 100% { opacity: 0; }
-      88.5% { opacity: 0.2; }
-      89% { opacity: 1; }
-      89.8% { opacity: 0.15; }
-      90.3% { opacity: 0.9; }
-      91.5% { opacity: 0.25; }
-      93% { opacity: 0; }
-    }
-    @keyframes skyFlash {
-      0%, 88%, 100% { opacity: 0; }
-      89% { opacity: 0.45; }
-      89.8% { opacity: 0.1; }
-      90.3% { opacity: 0.35; }
-      92% { opacity: 0; }
-    }
-
-    /* ===== 레이아웃 ===== */
     .page {
       position: relative;
       z-index: 2;
@@ -166,7 +138,6 @@
       overflow: hidden;
     }
 
-    /* 헤더 */
     .header {
       text-align: center;
       margin-bottom: 28px;
@@ -281,7 +252,6 @@
       font-size: 0.92rem;
     }
 
-    /* 메인 버튼 영역 */
     .main-actions {
       width: 100%;
       display: grid;
@@ -324,7 +294,6 @@
       border-color: rgba(212, 175, 55, 0.5);
     }
     .btn-apply i { color: var(--gold-bright); }
-
     .btn-hall i { color: var(--gold); }
 
     .btn-discord {
@@ -337,7 +306,6 @@
       box-shadow: 0 10px 28px rgba(88, 101, 242, 0.3);
     }
 
-    /* ===== 폼 오버레이 ===== */
     .form-overlay {
       position: fixed;
       inset: 0;
@@ -393,7 +361,6 @@
     }
     .form-close:hover { color: var(--gold); }
 
-    /* 진행 바 */
     .progress-wrap {
       margin-bottom: 22px;
       padding-top: 6px;
@@ -479,7 +446,6 @@
     }
     .error-msg.show { display: block; }
 
-    /* Yes / No */
     .yn-group {
       display: flex;
       gap: 12px;
@@ -508,7 +474,6 @@
       color: #ff8a7a;
     }
 
-    /* 확인 슬라이드 */
     .confirm-list {
       display: flex;
       flex-direction: column;
@@ -550,7 +515,6 @@
       background: rgba(212, 175, 55, 0.15);
     }
 
-    /* 하단 버튼 */
     .nav-row {
       display: grid;
       grid-template-columns: 2fr 8fr;
@@ -588,7 +552,6 @@
       grid-column: 1 / -1;
     }
 
-    /* 성공 화면 */
     .success-view {
       text-align: center;
       padding: 30px 10px 20px;
@@ -650,7 +613,6 @@
       display: none !important;
     }
 
-    /* 푸터 */
     .footer {
       margin-top: auto;
       padding-top: 40px;
@@ -661,7 +623,6 @@
       font-family: 'Cinzel', serif;
     }
 
-    /* 명예의 전당 오버레이 */
     .hall-overlay {
       position: fixed;
       inset: 0;
@@ -773,7 +734,6 @@
     }
     .hall-close:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* ===== 반응형 ===== */
     @media (max-width: 480px) {
       .logo-wrap { width: 140px; height: 140px; }
       .clan-name { font-size: 1.55rem; letter-spacing: 0.14em; }
@@ -1471,7 +1431,7 @@
       if (lightningFlash) lightningFlash.classList.remove('is-hidden');
     }
 
-    // ========== 명예의 전당 (구글 드라이브 동적 연동) ==========
+    // ========== 명예의 전당 (Base64 방식 연동) ==========
     function resetHallUI() {
       if (hallLoading) {
         hallLoading.classList.add('show');
@@ -1499,26 +1459,27 @@
             return;
           }
           
-          const imageUrls = data.images;
-          const imgs = [];
+          const imageItems = data.images;
+          const total = imageItems.length;
+          const imgs = new Array(total);
           let loaded = 0;
           let failed = 0;
-          const total = imageUrls.length;
 
-          imageUrls.forEach((url, idx) => {
+          imageItems.forEach((item, idx) => {
             const img = document.createElement('img');
             img.alt = 'Hall of Fame record ' + (idx + 1);
             img.loading = 'lazy';
             img.onload = () => {
               loaded++;
-              imgs.push(img);
+              imgs[idx] = img; // 순서 유지
               checkDone();
             };
             img.onerror = () => {
               failed++;
+              imgs[idx] = null;
               checkDone();
             };
-            img.src = url;
+            img.src = `data:${item.mimeType};base64,${item.data}`;
           });
 
           function checkDone() {
@@ -1528,7 +1489,7 @@
               if (hallError) hallError.classList.add('show');
             } else {
               if (hallGallery) {
-                imgs.forEach(i => hallGallery.appendChild(i));
+                imgs.filter(Boolean).forEach(i => hallGallery.appendChild(i));
                 hallGallery.classList.add('show');
               }
             }
