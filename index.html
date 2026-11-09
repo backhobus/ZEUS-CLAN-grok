@@ -745,18 +745,23 @@
     }
     .hall-gallery {
       display: none;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      /* 화면 크기와 관계없이 한 행에 2개씩 배치 */
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
       max-height: 55vh;
       overflow-y: auto;
       padding: 4px;
       text-align: left;
+      align-items: start;
     }
     .hall-gallery.show { display: grid; }
     .hall-gallery img {
+      display: block;
       width: 100%;
-      aspect-ratio: 1;
+      /* 모든 명예의 전당 이미지를 가로 3 : 세로 2 비율로 표시 */
+      aspect-ratio: 3 / 2;
       object-fit: cover;
+      object-position: center;
       border-radius: 10px;
       border: 1px solid rgba(212, 175, 55, 0.25);
       background: #000;
