@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ZEUS CLAN | 가입 신청</title>
+  <link rel="icon" type="image/png" href="ZEUSweb.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Cinzel:wght@400;600;700&family=Orbitron:wght@500;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --bg-deep: #05070d;
+      --bg-card: rgba(12, 16, 28, 0.92);
+      --gold: #d4af37;
+      --gold-bright: #f0d060;
+      --gold-dim: #a88b2e;
+      --purple-legend: #9b59b6;
+      --purple-deep: #6c3483;
+      --text-main: #e8e6e3;
+      --text-muted: #9a9a9a;
+      --discord: #5865F2;
+      --error: #e74c3c;
+      --success: #2ecc71;
+      --border: rgba(212, 175, 55, 0.35);
+      --radius: 14px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      background: var(--bg-deep);
+      color: var(--text-main);
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow: hidden;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html.keyboard-open, body.keyboard-open {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* 텍스트/이미지 선택 방지 (입력칸 제외) */
+    body {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    input, textarea, [contenteditable] {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
+    }
+
+    /* 우클릭 / 드래그 방지 */
+    body {
+      -webkit-touch-callout: none;
+    }
+
+    /* ===== 배경 효과 ===== */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 175, 55, 0.12), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(88, 101, 242, 0.08), transparent 50%),
+        radial-gradient(ellipse 50% 30% at 10% 70%, rgba(155, 89, 182, 0.07), transparent 50%),
+        linear-gradient(180deg, #05070d 0%, #0a0e1a 50%, #05070d 100%);
+    }
+
+    /* ===== 번개 (실제 번개 형태, 노란색) ===== */
+    .lightning {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      transition: opacity 0.25s ease;
+    }
+    .lightning.is-hidden {
+      opacity: 0 !important;
+      visibility: hidden;
+    }
+
+    .lightning .bolt {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      filter:
+        drop-shadow(0 0 1px #fffce0)
+        drop-shadow(0 0 2px #ffe566)
+        drop-shadow(0 0 6px rgba(255, 220, 60, 0.9))
+        drop-shadow(0 0 14px rgba(255, 200, 40, 0.5));
+    }
+    .lightning .bolt svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    .lightning-flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(ellipse 90% 50% at 50% 0%, rgba(255, 245, 180, 0.28), transparent 60%);
+      opacity: 0;
+      animation: none;
+      transition: opacity 0.25s ease;
+    }
+    .lightning-flash.is-hidden {
+      opacity: 0 !important;
+      animation: none !important;
+      visibility: hidden;
+    }
+
+    /* 짧고 날카로운 실제 번개 타이밍 */
+    @keyframes strike {
+      0%, 88%, 100% { opacity: 0; }
+      88.5% { opacity: 0.2; }
+      89% { opacity: 1; }
+      89.8% { opacity: 0.15; }
+      90.3% { opacity: 0.9; }
+      91.5% { opacity: 0.25; }
+      93% { opacity: 0; }
+    }
+    @keyframes skyFlash {
+      0%, 88%, 100% { opacity: 0; }
+      89% { opacity: 0.45; }
+      89.8% { opacity: 0.1; }
+      90.3% { opacity: 0.35; }
+      92% { opacity: 0; }
+    }
+
+    /* ===== 레이아웃 ===== */
+    .page {
+      position: relative;
+      z-index: 2;
+      min-height: 100%;
+      min-height: 100dvh;
+      height: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 16px 24px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* 헤더 */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      max-width: 640px;
+      width: 100%;
+      animation: pageEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .right-panel {
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+    }
+    .main-actions {
+      animation: pageEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+      transition:
+        opacity 0.18s ease,
+        visibility 0.18s ease,
+        transform 0.18s ease;
+    }
+    .page.panel-open .main-actions {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.97) translateY(6px);
+      transition:
+        opacity 0.12s ease,
+        visibility 0.12s ease,
+        transform 0.12s ease;
+    }
+    .footer {
+      animation: pageEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+    }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-wrap {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 36px rgba(212, 175, 55, 0.45), 0 0 70px rgba(212, 175, 55, 0.15);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+
+    .since {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      color: #b8b4a8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .clan-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      color: #f0d878;
+      margin-bottom: 12px;
+      text-shadow: 0 0 18px rgba(240, 216, 120, 0.4);
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+
+    .title-line {
+      font-size: 0.95rem;
+      font-weight: 500;
+      line-height: 1.55;
+      color: #c5c2b8;
+      word-break: keep-all;
+      transition:
+        opacity 0.28s ease,
+        transform 0.28s ease,
+        color 0.28s ease,
+        letter-spacing 0.28s ease,
+        font-size 0.28s ease;
+      will-change: opacity, transform;
+    }
+    .title-line.is-fading {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .title-line .hero {
+      color: var(--gold-bright);
+      font-weight: 700;
+    }
+    .title-line .legend {
+      color: var(--purple-legend);
+      font-weight: 700;
+    }
+    .title-line.is-legend {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.12em;
+      color: #e8d9a0;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.92rem;
+    }
+
+    /* 메인 버튼 영역 */
+    .main-actions {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .btn-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 22px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+    .btn-main i {
+      font-size: 1.55rem;
+    }
+    .btn-main:hover, .btn-main:active {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+      box-shadow: 0 10px 28px rgba(212, 175, 55, 0.25);
+    }
+
+    .btn-apply {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(168, 139, 46, 0.12));
+      border-color: rgba(212, 175, 55, 0.5);
+    }
+    .btn-apply i { color: var(--gold-bright); }
+
+    .btn-hall i { color: var(--gold); }
+
+    .btn-discord {
+      background: linear-gradient(135deg, rgba(88, 101, 242, 0.22), rgba(88, 101, 242, 0.1));
+      border-color: rgba(88, 101, 242, 0.45);
+    }
+    .btn-discord i { color: #7289da; }
+    .btn-discord:hover {
+      border-color: #7289da;
+      box-shadow: 0 10px 28px rgba(88, 101, 242, 0.3);
+    }
+
+    /* ===== 폼 오버레이 ===== */
+    .form-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(3, 5, 10, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.4s;
+    }
+    .form-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .form-card {
+      width: 100%;
+      max-width: 480px;
+      max-height: 92vh;
+      overflow-y: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      padding: 28px 22px 24px;
+      position: relative;
+      transform: translateY(18px) scale(0.97);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .form-overlay.active .form-card {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .form-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+    .form-close:hover { color: var(--gold); }
+
+    /* 진행 바 */
+    .progress-wrap {
+      margin-bottom: 22px;
+      padding-top: 6px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .progress-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold-bright));
+      border-radius: 99px;
+      transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .slide {
+      display: none;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    .slide.active {
+      display: block;
+      animation: slideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      line-height: 1.45;
+      word-break: keep-all;
+      color: #ffffff;
+    }
+
+    .input-wrap {
+      margin-bottom: 8px;
+    }
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.35);
+      color: var(--text-main);
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--gold);
+    }
+    .form-input::placeholder, .form-textarea::placeholder {
+      color: #6a6a6a;
+      font-size: 0.92rem;
+    }
+    .form-textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .error-msg {
+      color: var(--error);
+      font-size: 0.85rem;
+      margin-top: 8px;
+      min-height: 1.2em;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* Yes / No */
+    .yn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .yn-btn {
+      flex: 1;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(0,0,0,0.3);
+      color: var(--text-main);
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .yn-btn.selected-yes {
+      background: rgba(46, 204, 113, 0.2);
+      border-color: var(--success);
+      color: #7dffa3;
+    }
+    .yn-btn.selected-no {
+      background: rgba(231, 76, 60, 0.18);
+      border-color: var(--error);
+      color: #ff8a7a;
+    }
+
+    /* 확인 슬라이드 */
+    .confirm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .confirm-item {
+      background: rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .confirm-q {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .confirm-a {
+      font-size: 0.95rem;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+    .edit-btn {
+      flex-shrink: 0;
+      background: none;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--gold);
+      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .edit-btn:hover {
+      background: rgba(212, 175, 55, 0.15);
+    }
+
+    /* 하단 버튼 */
+    .nav-row {
+      display: grid;
+      grid-template-columns: 2fr 8fr;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .nav-row.nav-first {
+      grid-template-columns: 1fr;
+    }
+    .nav-btn {
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-prev {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn-prev:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .btn-next, .btn-submit {
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: #1a1508;
+    }
+    .btn-next:hover, .btn-submit:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+    }
+    .btn-submit {
+      grid-column: 1 / -1;
+    }
+
+    /* 성공 화면 */
+    .success-view {
+      text-align: center;
+      padding: 30px 10px 20px;
+      display: none;
+      opacity: 0;
+    }
+    .success-view.active {
+      display: block;
+      animation: slideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .success-logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 28px rgba(212, 175, 55, 0.4);
+      background: #000;
+    }
+    .success-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+    .success-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+      margin-bottom: 10px;
+    }
+    .success-sub {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      word-break: keep-all;
+      margin-bottom: 28px;
+    }
+    .btn-back-main {
+      display: inline-block;
+      padding: 14px 28px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: #1a1508;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-back-main:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+    }
+    .form-close.is-hidden {
+      display: none !important;
+    }
+
+    /* 푸터 */
+    .footer {
+      margin-top: auto;
+      padding-top: 40px;
+      text-align: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: #5a574f;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* 명예의 전당 오버레이 */
+    .hall-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(3, 5, 10, 0.94);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.4s;
+    }
+    .hall-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .hall-card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transform: translateY(18px) scale(0.97);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .hall-overlay.active .hall-card {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .hall-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #f0d878;
+      margin-bottom: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-shadow: 0 0 18px rgba(240, 216, 120, 0.35);
+    }
+    .hall-subtitle {
+      font-size: 0.92rem;
+      color: #c5c2b8;
+      margin-bottom: 18px;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+    .hall-status {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding: 40px 10px;
+      border: 1px dashed rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      word-break: keep-all;
+      display: none;
+      opacity: 0;
+    }
+    .hall-status.show {
+      display: block;
+      animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .hall-status.loading .hall-spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(212, 175, 55, 0.25);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .hall-gallery {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      max-height: 55vh;
+      overflow-y: auto;
+      padding: 4px;
+      text-align: left;
+    }
+    .hall-gallery.show { display: grid; }
+    .hall-gallery img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      background: #000;
+    }
+    .hall-close {
+      margin-top: 20px;
+      padding: 12px 28px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.3);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .hall-close:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ===== 반응형 ===== */
+    @media (max-width: 480px) {
+      .logo-wrap { width: 140px; height: 140px; }
+      .clan-name { font-size: 1.55rem; letter-spacing: 0.14em; }
+      .title-line { font-size: 0.86rem; }
+      .btn-main { padding: 18px 12px; font-size: 0.92rem; }
+      .btn-main i { font-size: 1.35rem; }
+      .form-card { padding: 24px 16px 20px; }
+      .slide-title { font-size: 1.05rem; }
+      .form-input::placeholder,
+      .form-textarea::placeholder {
+        font-size: 0.82rem;
+      }
+      #ageInput::placeholder {
+        font-size: 0.72rem;
+      }
+      .nav-row { grid-template-columns: 2fr 8fr; }
+      .nav-row.nav-first { grid-template-columns: 1fr; }
+    }
+
+    @media (min-width: 768px) {
+      .page { padding: 24px 24px 32px; }
+      .logo-wrap { width: 200px; height: 200px; }
+      .clan-name { font-size: 2.35rem; letter-spacing: 0.2em; }
+      .title-line { font-size: 1.05rem; }
+      .main-actions { max-width: 560px; gap: 14px; }
+      .btn-main { padding: 26px 18px; font-size: 1.05rem; }
+      .btn-main i { font-size: 1.7rem; }
+    }
+
+    @media (min-width: 900px) {
+      .page {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 96px;
+        padding: 32px 48px 56px;
+        max-width: 1220px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .header {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 400px;
+        margin-bottom: 0;
+        margin-right: 0;
+      }
+      .logo-wrap {
+        width: 230px;
+        height: 230px;
+        margin-bottom: 20px;
+      }
+      .clan-name {
+        font-size: 2.55rem;
+        letter-spacing: 0.2em;
+        margin-bottom: 14px;
+      }
+      .title-line {
+        font-size: 1.02rem;
+      }
+      .title-line.is-legend {
+        font-size: 0.98rem;
+      }
+      .right-panel {
+        flex: 0 0 auto;
+        width: 500px;
+        max-width: 500px;
+        min-height: 320px;
+      }
+      .main-actions {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 0;
+        gap: 16px;
+      }
+      .btn-main {
+        padding: 32px 22px;
+        font-size: 1.12rem;
+        border-radius: 16px;
+      }
+      .btn-main i {
+        font-size: 1.9rem;
+      }
+      .btn-apply {
+        padding: 36px 22px;
+      }
+      .footer {
+        position: fixed;
+        bottom: 18px;
+        left: 0;
+        right: 0;
+        margin-top: 0;
+        padding-top: 0;
+        z-index: 120;
+        pointer-events: none;
+      }
+      .form-overlay,
+      .hall-overlay {
+        left: 0;
+        right: 0;
+        width: 100%;
+        background: transparent;
+        backdrop-filter: none;
+        padding: 0;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+      .form-overlay .form-card,
+      .hall-overlay .hall-card {
+        position: fixed;
+        width: auto;
+        max-width: none;
+        max-height: calc(100vh - 80px);
+        margin: 0;
+        pointer-events: auto;
+        left: -9999px;
+        top: 0;
+        opacity: 0;
+        box-sizing: border-box;
+        transform: translateY(10px) scale(0.98);
+        transition:
+          opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .form-overlay.active,
+      .hall-overlay.active {
+        pointer-events: none;
+      }
+      .form-overlay.active .form-card,
+      .hall-overlay.active .hall-card {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      .form-overlay:not(.active) .form-card,
+      .hall-overlay:not(.active) .hall-card {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+        transition:
+          opacity 0.15s ease,
+          transform 0.15s ease;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .page {
+        max-width: 1320px;
+        gap: 112px;
+      }
+      .header { max-width: 440px; }
+      .logo-wrap { width: 250px; height: 250px; }
+      .right-panel {
+        width: 540px;
+        max-width: 540px;
+      }
+      .btn-main {
+        padding: 34px 24px;
+        font-size: 1.15rem;
+      }
+      .btn-main i { font-size: 2rem; }
+      .btn-apply { padding: 40px 24px; }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: #1a1508;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="lightning-flash" id="lightningFlash" aria-hidden="true"></div>
+  <div class="lightning" id="lightningLayer" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="header">
+      <div class="logo-wrap">
+        <img src="ZEUS.png" alt="ZEUS CLAN Logo" draggable="false" />
+      </div>
+      <div class="since">Since 2020</div>
+      <div class="clan-name">ZEUS CLAN</div>
+      <p class="title-line">
+        <span class="hero">영웅</span>, <span class="legend">전설</span> 타이틀 누적 299개 배출
+      </p>
+    </header>
+
+    <div class="right-panel" id="rightPanel">
+      <div class="main-actions" id="mainActions">
+        <button class="btn-main btn-apply" id="btnApply" type="button">
+          <i class="fa-solid fa-file-signature"></i>
+          <span>가입신청서 작성</span>
+        </button>
+        <button class="btn-main btn-hall" id="btnHall" type="button">
+          <i class="fa-solid fa-trophy"></i>
+          <span>명예의 전당</span>
+        </button>
+        <a class="btn-main btn-discord" href="https://discord.gg/Bd79ZUXdm2" target="_blank" rel="noopener">
+          <i class="fa-brands fa-discord"></i>
+          <span>공식 디스코드</span>
+        </a>
+      </div>
+    </div>
+
+    <footer class="footer">
+      ZEUS CLAN · ALL RIGHTS RESERVED
+    </footer>
+  </div>
+
+  <div class="form-overlay" id="formOverlay">
+    <div class="form-card" id="formCard">
+      <button class="form-close" id="formClose" type="button" aria-label="닫기">&times;</button>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-label">
+          <span id="stepLabel">1 / 5</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="slide active" data-step="1">
+        <div class="slide-title">게임에서 사용하는 닉네임을 알려주세요.</div>
+        <div class="input-wrap">
+          <input type="text" class="form-input" id="nickname" autocomplete="off" maxlength="40" />
+        </div>
+        <div class="error-msg" id="err1"></div>
+        <div class="nav-row nav-first">
+          <button class="nav-btn btn-next" type="button" data-next="2">다음</button>
+        </div>
+      </div>
+
+      <div class="slide" data-step="2">
+        <div class="slide-title">게임 UID를 알려주세요.</div>
+        <div class="input-wrap">
+          <input type="text" class="form-input" id="gameUid" autocomplete="off" maxlength="16"
+                 placeholder="예: 428BCBA023C04781" />
+        </div>
+        <div class="error-msg" id="err2"></div>
+        <div class="nav-row">
+          <button class="nav-btn btn-prev" type="button" data-prev="1">이전</button>
+          <button class="nav-btn btn-next" type="button" data-next="3">다음</button>
+        </div>
+      </div>
+
+      <div class="slide" data-step="3">
+        <div class="slide-title">연령대를 알려주세요.</div>
+        <div class="input-wrap">
+          <input type="text" class="form-input" id="ageInput" autocomplete="off" maxlength="20"
+                 placeholder="가입 절차를 위해서만 사용되며, 외부로 공유되지 않습니다." />
+        </div>
+        <div class="error-msg" id="err3"></div>
+        <div class="nav-row">
+          <button class="nav-btn btn-prev" type="button" data-prev="2">이전</button>
+          <button class="nav-btn btn-next" type="button" data-next="4">다음</button>
+        </div>
+      </div>
+
+      <div class="slide" data-step="4">
+        <div class="slide-title">ZEUS에 가입하고 싶은 사유를 알려주세요.</div>
+        <div class="input-wrap">
+          <textarea class="form-textarea" id="reason" maxlength="500"></textarea>
+        </div>
+        <div class="error-msg" id="err4"></div>
+        <div class="nav-row">
+          <button class="nav-btn btn-prev" type="button" data-prev="3">이전</button>
+          <button class="nav-btn btn-next" type="button" data-next="5">다음</button>
+        </div>
+      </div>
+
+      <div class="slide" data-step="5">
+        <div class="slide-title">디스코드에 참가하여 토너먼트에 도전할 의향이 있나요?</div>
+        <div class="yn-group">
+          <button class="yn-btn" type="button" data-value="예" id="ynYes">예</button>
+          <button class="yn-btn" type="button" data-value="아니요" id="ynNo">아니요</button>
+        </div>
+        <div class="error-msg" id="err5"></div>
+        <div class="nav-row">
+          <button class="nav-btn btn-prev" type="button" data-prev="4">이전</button>
+          <button class="nav-btn btn-next" type="button" data-next="6">다음</button>
+        </div>
+      </div>
+
+      <div class="slide" data-step="6">
+        <div class="slide-title">마지막으로 확인해주세요.</div>
+        <div class="confirm-list" id="confirmList"></div>
+        <div class="nav-row" style="grid-template-columns: 1fr;">
+          <button class="nav-btn btn-submit" type="button" id="btnSubmit">가입 신청하기</button>
+        </div>
+      </div>
+
+      <div class="success-view" id="successView">
+        <div class="success-logo">
+          <img src="ZEUS.png" alt="ZEUS CLAN Logo" draggable="false" />
+        </div>
+        <div class="success-title">신청이 완료되었어요.</div>
+        <div class="success-sub">가입안내방에서 매니저님 확인을 기다려주세요.</div>
+        <button class="btn-back-main" id="btnBackMain" type="button">돌아가기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hall-overlay" id="hallOverlay">
+    <div class="hall-card">
+      <div class="hall-title">HALL OF FAME</div>
+      <div class="hall-subtitle">ZEUS의 이름을 빛낸 함장들의 기록</div>
+      <div class="hall-status loading" id="hallLoading">
+        <span class="hall-spinner"></span>기록을 불러오는 중...
+      </div>
+      <div class="hall-status" id="hallEmpty">등록된 기록이 없습니다.</div>
+      <div class="hall-status" id="hallError">기록을 불러오지 못했습니다.</div>
+      <div class="hall-gallery" id="hallGallery"></div>
+      <button class="hall-close" id="hallClose" type="button">닫기</button>
+    </div>
+  </div>
+
+  <script>
+    const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwR5Pux8mI-BHkML3ttnoGX7vtivKrPKUtTHXzme75Yt9rC_4B-dMPnvgwdY_bRG8aGzA/exec';
+
+    const state = {
+      nickname: '',
+      gameUid: '',
+      age: '',
+      reason: '',
+      tournament: '',
+      currentStep: 1
+    };
+
+    const FORM_STORAGE_KEY = 'zeus_clan_application_draft';
+
+    function saveFormDraft() {
+      try {
+        const nickEl = document.getElementById('nickname');
+        const uidEl = document.getElementById('gameUid');
+        const ageEl = document.getElementById('ageInput');
+        const reasonEl = document.getElementById('reason');
+        if (nickEl) state.nickname = nickEl.value.trim();
+        if (uidEl) state.gameUid = uidEl.value.trim().toUpperCase();
+        if (ageEl) state.age = ageEl.value.trim();
+        if (reasonEl) state.reason = reasonEl.value.trim();
+        const draft = {
+          nickname: state.nickname,
+          gameUid: state.gameUid,
+          age: state.age,
+          reason: state.reason,
+          tournament: state.tournament,
+          currentStep: state.currentStep
+        };
+        localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(draft));
+      } catch (e) { /* ignore */ }
+    }
+
+    function loadFormDraft() {
+      try {
+        const raw = localStorage.getItem(FORM_STORAGE_KEY);
+        if (!raw) return false;
+        const draft = JSON.parse(raw);
+        if (!draft || typeof draft !== 'object') return false;
+        state.nickname = draft.nickname || '';
+        state.gameUid = draft.gameUid || '';
+        state.age = draft.age || '';
+        state.reason = draft.reason || '';
+        state.tournament = draft.tournament || '';
+        state.currentStep = draft.currentStep || 1;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function clearFormDraft() {
+      try { localStorage.removeItem(FORM_STORAGE_KEY); } catch (e) { /* ignore */ }
+    }
+
+    function applyStateToInputs() {
+      const nickEl = document.getElementById('nickname');
+      const uidEl = document.getElementById('gameUid');
+      const ageEl = document.getElementById('ageInput');
+      const reasonEl = document.getElementById('reason');
+      if (nickEl) nickEl.value = state.nickname || '';
+      if (uidEl) uidEl.value = state.gameUid || '';
+      if (ageEl) ageEl.value = state.age || '';
+      if (reasonEl) reasonEl.value = state.reason || '';
+      const ynYes = document.getElementById('ynYes');
+      const ynNo = document.getElementById('ynNo');
+      if (ynYes && ynNo) {
+        ynYes.classList.toggle('selected-yes', state.tournament === '예');
+        ynNo.classList.toggle('selected-no', state.tournament === '아니요');
+      }
+    }
+
+    const formOverlay = document.getElementById('formOverlay');
+    const hallOverlay = document.getElementById('hallOverlay');
+    const progressFill = document.getElementById('progressFill');
+    const stepLabel = document.getElementById('stepLabel');
+    const progressWrap = document.getElementById('progressWrap');
+    const successView = document.getElementById('successView');
+    const formCard = document.getElementById('formCard');
+    const hallLoading = document.getElementById('hallLoading');
+    const hallEmpty = document.getElementById('hallEmpty');
+    const hallError = document.getElementById('hallError');
+    const hallGallery = document.getElementById('hallGallery');
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+    function hideError(id) {
+      const el = document.getElementById(id);
+      el.textContent = '';
+      el.classList.remove('show');
+    }
+
+    function updateProgress(step) {
+      let pct = 0;
+      if (step <= 5) {
+        pct = ((step - 1) / 4) * 100;
+      } else {
+        pct = 100;
+      }
+      progressFill.style.width = pct + '%';
+      if (step <= 5) {
+        stepLabel.textContent = step + ' / 5';
+        progressWrap.style.display = 'block';
+      } else {
+        stepLabel.textContent = '확인';
+        progressWrap.style.display = 'block';
+      }
+    }
+
+    function goToStep(step) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const target = document.querySelector(`.slide[data-step="${step}"]`);
+      if (target) {
+        target.classList.add('active');
+        state.currentStep = step;
+        updateProgress(step);
+        saveFormDraft();
+        if (step === 6) renderConfirm();
+        requestAnimationFrame(() => placeCardOnRightPanel(formCardEl));
+        setTimeout(() => {
+          const input = target.querySelector('input, textarea');
+          if (input) input.focus();
+        }, 100);
+      }
+    }
+
+    function renderConfirm() {
+      const list = document.getElementById('confirmList');
+      const items = [
+        { q: '닉네임', a: state.nickname, step: 1 },
+        { q: '게임 UID', a: state.gameUid, step: 2 },
+        { q: '연령대', a: state.age, step: 3 },
+        { q: '가입 사유', a: state.reason, step: 4 },
+        { q: '토너먼트 참가 의향', a: state.tournament, step: 5 }
+      ];
+      list.innerHTML = items.map(item => `
+        <div class="confirm-item">
+          <div>
+            <div class="confirm-q">${item.q}</div>
+            <div class="confirm-a">${escapeHtml(item.a)}</div>
+          </div>
+          <button class="edit-btn" type="button" data-edit="${item.step}">수정</button>
+        </div>
+      `).join('');
+      list.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => goToStep(+btn.dataset.edit));
+      });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function validateStep(step) {
+      if (step === 1) {
+        const v = document.getElementById('nickname').value.trim();
+        if (!v) {
+          showError('err1', '답변을 입력해 주세요.');
+          return false;
+        }
+        state.nickname = v;
+        hideError('err1');
+        return true;
+      }
+      if (step === 2) {
+        let v = document.getElementById('gameUid').value.trim().toUpperCase();
+        document.getElementById('gameUid').value = v;
+        const onlyValid = /^[A-Z0-9]+$/.test(v);
+        const noO = !v.includes('O');
+        const lenOk = v.length === 15 || v.length === 16;
+        if (!v) {
+          showError('err2', '답변을 입력해 주세요.');
+          return false;
+        }
+        if (!onlyValid || !noO || !lenOk) {
+          showError('err2', '게임 UID를 다시 확인해주세요.');
+          return false;
+        }
+        state.gameUid = v;
+        hideError('err2');
+        return true;
+      }
+      if (step === 3) {
+        const v = document.getElementById('ageInput').value.trim();
+        if (!v) {
+          showError('err3', '답변을 입력해 주세요.');
+          return false;
+        }
+        if (!/\d/.test(v)) {
+          showError('err3', '숫자를 포함해 주세요.');
+          return false;
+        }
+        state.age = v;
+        hideError('err3');
+        return true;
+      }
+      if (step === 4) {
+        const v = document.getElementById('reason').value.trim();
+        if (!v) {
+          showError('err4', '답변을 입력해 주세요.');
+          return false;
+        }
+        state.reason = v;
+        hideError('err4');
+        return true;
+      }
+      if (step === 5) {
+        if (!state.tournament) {
+          showError('err5', '답변을 입력해 주세요.');
+          return false;
+        }
+        hideError('err5');
+        return true;
+      }
+      return true;
+    }
+
+    (function () {
+      const layer = document.getElementById('lightningLayer');
+      if (!layer) return;
+
+      function rand(a, b) { return a + Math.random() * (b - a); }
+      function randInt(a, b) { return Math.floor(rand(a, b + 1)); }
+      function isDesktop() { return window.innerWidth >= 768; }
+
+      function buildBoltPath(w, h) {
+        const wide = isDesktop();
+        const startX = wide ? rand(w * 0.02, w * 0.98) : rand(w * 0.05, w * 0.95);
+        const startY = 0;
+        const targetLen = h * (wide ? rand(0.45, 0.92) : rand(0.4, 0.78));
+        const steps = wide ? randInt(10, 18) : randInt(8, 14);
+
+        let x = startX;
+        let y = startY;
+        let d = `M${x.toFixed(1)} ${y.toFixed(1)}`;
+        const branchStarts = [];
+
+        let bias = rand(-1, 1);
+        const maxSwing = wide ? w * rand(0.08, 0.22) : w * rand(0.06, 0.16);
+
+        for (let i = 0; i < steps; i++) {
+          const stepY = (targetLen / steps) * rand(0.7, 1.35);
+          y = Math.min(h * 0.98, y + stepY);
+
+          const sharp = Math.random() < 0.35;
+          const swing = sharp
+            ? rand(-maxSwing, maxSwing) * rand(0.8, 1.4)
+            : rand(-maxSwing * 0.45, maxSwing * 0.45);
+
+          bias = bias * 0.55 + Math.sign(swing || bias) * rand(0.1, 0.5);
+          x = x + swing + bias * maxSwing * 0.15;
+          x = Math.max(w * 0.01, Math.min(w * 0.99, x));
+
+          d += ` L${x.toFixed(1)} ${y.toFixed(1)}`;
+
+          if (i > 1 && i < steps - 2 && Math.random() < (wide ? 0.42 : 0.32)) {
+            branchStarts.push({ x, y, dir: Math.random() < 0.5 ? -1 : 1 });
+          }
+        }
+
+        let branches = '';
+        for (const b of branchStarts) {
+          const segs = wide ? randInt(3, 6) : randInt(2, 5);
+          let bx = b.x;
+          let by = b.y;
+          let bd = `M${bx.toFixed(1)} ${by.toFixed(1)}`;
+          const bSwing = maxSwing * rand(0.5, 1.1);
+          for (let s = 0; s < segs; s++) {
+            by += rand(h * 0.02, h * 0.06);
+            bx += b.dir * rand(bSwing * 0.3, bSwing) * (Math.random() < 0.4 ? 1.3 : 0.7);
+            if (Math.random() < 0.3) b.dir *= -1;
+            bx = Math.max(0, Math.min(w, bx));
+            bd += ` L${bx.toFixed(1)} ${by.toFixed(1)}`;
+          }
+          const thick = rand(0.7, 1.25).toFixed(2);
+          const col = Math.random() < 0.5 ? '#ffe566' : '#ffed7a';
+          branches += `<path d="${bd}" fill="none" stroke="${col}" stroke-width="${thick}" stroke-linecap="round" stroke-linejoin="miter"/>`;
+        }
+
+        const mainW = rand(1.6, 2.5).toFixed(2);
+        const main = `<path d="${d}" fill="none" stroke="#fff8c8" stroke-width="${mainW}" stroke-linecap="round" stroke-linejoin="miter"/>`;
+        return main + branches;
+      }
+
+      function spawnBolt() {
+        if (layer.classList.contains('is-hidden')) return;
+
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const svgNS = 'http://www.w3.org/2000/svg';
+
+        const flashEl = document.getElementById('lightningFlash');
+        if (flashEl && !flashEl.classList.contains('is-hidden')) {
+          flashEl.style.transition = 'opacity 0.05s linear';
+          flashEl.style.opacity = '0.4';
+          setTimeout(() => { flashEl.style.opacity = '0.08'; }, 30);
+          setTimeout(() => { flashEl.style.opacity = '0.35'; }, 55);
+          setTimeout(() => { flashEl.style.opacity = '0'; }, 140);
+        }
+
+        const wrap = document.createElement('div');
+        wrap.className = 'bolt';
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        svg.setAttribute('preserveAspectRatio', 'none');
+        svg.innerHTML = buildBoltPath(w, h);
+        wrap.appendChild(svg);
+        layer.appendChild(wrap);
+
+        const flashMs = rand(25, 55);
+        wrap.style.transition = 'opacity 0.03s linear';
+        wrap.style.opacity = '1';
+        setTimeout(() => { wrap.style.opacity = '0.12'; }, flashMs);
+        setTimeout(() => { wrap.style.opacity = '1'; }, flashMs + 18);
+        setTimeout(() => { wrap.style.opacity = '0.18'; }, flashMs + 40);
+        setTimeout(() => { wrap.style.opacity = '0.75'; }, flashMs + 55);
+        setTimeout(() => {
+          wrap.style.opacity = '0';
+          setTimeout(() => wrap.remove(), 100);
+        }, flashMs + 100);
+      }
+
+      function scheduleNext() {
+        if (layer.classList.contains('is-hidden')) {
+          setTimeout(scheduleNext, 800);
+          return;
+        }
+        const desk = isDesktop();
+        const delay = desk ? rand(350, 1100) : rand(500, 1500);
+        setTimeout(() => {
+          spawnBolt();
+          if (desk && Math.random() < 0.45) {
+            setTimeout(spawnBolt, rand(30, 100));
+          }
+          if (desk && Math.random() < 0.25) {
+            setTimeout(spawnBolt, rand(50, 160));
+          }
+          if (!desk && Math.random() < 0.2) {
+            setTimeout(spawnBolt, rand(40, 120));
+          }
+          scheduleNext();
+        }, delay);
+      }
+
+      setTimeout(() => {
+        spawnBolt();
+        scheduleNext();
+      }, 300);
+
+      window.addEventListener('resize', () => {
+        layer.querySelectorAll('.bolt').forEach(el => el.remove());
+      });
+    })();
+
+    const lightningLayer = document.getElementById('lightningLayer');
+    const lightningFlash = document.getElementById('lightningFlash');
+    function hideLightning() {
+      if (lightningLayer) lightningLayer.classList.add('is-hidden');
+      if (lightningFlash) lightningFlash.classList.add('is-hidden');
+    }
+    function showLightning() {
+      if (formOverlay.classList.contains('active') || hallOverlay.classList.contains('active')) return;
+      if (lightningLayer) lightningLayer.classList.remove('is-hidden');
+      if (lightningFlash) lightningFlash.classList.remove('is-hidden');
+    }
+
+    // ========== 명예의 전당 (구글 드라이브 동적 연동) ==========
+    function resetHallUI() {
+      if (hallLoading) {
+        hallLoading.classList.add('show');
+        hallLoading.classList.add('loading');
+      }
+      if (hallEmpty) hallEmpty.classList.remove('show');
+      if (hallError) hallError.classList.remove('show');
+      if (hallGallery) {
+        hallGallery.classList.remove('show');
+        hallGallery.innerHTML = '';
+      }
+    }
+
+    function loadHallOfFame() {
+      resetHallUI();
+      
+      fetch(GAS_ENDPOINT + '?action=getHallImages')
+        .then(res => res.json())
+        .then(data => {
+          if (hallLoading) hallLoading.classList.remove('show');
+          
+          if (data.result !== 'success' || !data.images || data.images.length === 0) {
+            if (hallEmpty) hallEmpty.classList.add('show');
+            placeCardOnRightPanel(hallCardEl);
+            return;
+          }
+          
+          const imageUrls = data.images;
+          const imgs = [];
+          let loaded = 0;
+          let failed = 0;
+          const total = imageUrls.length;
+
+          imageUrls.forEach((url, idx) => {
+            const img = document.createElement('img');
+            img.alt = 'Hall of Fame record ' + (idx + 1);
+            img.loading = 'lazy';
+            img.onload = () => {
+              loaded++;
+              imgs.push(img);
+              checkDone();
+            };
+            img.onerror = () => {
+              failed++;
+              checkDone();
+            };
+            img.src = url;
+          });
+
+          function checkDone() {
+            if (loaded + failed < total) return;
+            if (hallLoading) hallLoading.classList.remove('show');
+            if (loaded === 0) {
+              if (hallError) hallError.classList.add('show');
+            } else {
+              if (hallGallery) {
+                imgs.forEach(i => hallGallery.appendChild(i));
+                hallGallery.classList.add('show');
+              }
+            }
+            placeCardOnRightPanel(hallCardEl);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          if (hallLoading) hallLoading.classList.remove('show');
+          if (hallError) hallError.classList.add('show');
+          placeCardOnRightPanel(hallCardEl);
+        });
+    }
+
+    const formCloseBtn = document.getElementById('formClose');
+    const pageEl = document.querySelector('.page');
+    const titleLineEl = document.querySelector('.title-line');
+    const rightPanelEl = document.getElementById('rightPanel');
+    const formCardEl = document.getElementById('formCard');
+    const hallCardEl = document.querySelector('.hall-card');
+    const TITLE_DEFAULT_HTML = '<span class="hero">영웅</span>, <span class="legend">전설</span> 타이틀 누적 299개 배출';
+    const TITLE_LEGEND_TEXT = 'WHERE YOUR LEGEND BEGINS';
+
+    function isDesktopSplit() {
+      return window.matchMedia('(min-width: 900px)').matches;
+    }
+
+    let cachedActionsRect = null;
+
+    function measureActionsRect() {
+      const anchor = document.getElementById('mainActions') || rightPanelEl;
+      if (!anchor || !isDesktopSplit()) return null;
+      if (pageEl && pageEl.classList.contains('panel-open') && cachedActionsRect) {
+        return cachedActionsRect;
+      }
+      const rect = anchor.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        cachedActionsRect = {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+          right: rect.right,
+          bottom: rect.bottom
+        };
+      }
+      return cachedActionsRect;
+    }
+
+    function placeCardOnRightPanel(cardEl) {
+      if (!cardEl || !isDesktopSplit()) {
+        clearCardPlacement(cardEl);
+        return;
+      }
+      const rect = measureActionsRect();
+      if (!rect) return;
+
+      const maxH = window.innerHeight - 72;
+      const w = Math.round(rect.width);
+
+      cardEl.style.boxSizing = 'border-box';
+      cardEl.style.width = w + 'px';
+      cardEl.style.minWidth = w + 'px';
+      cardEl.style.maxWidth = w + 'px';
+      cardEl.style.left = Math.round(rect.left) + 'px';
+      cardEl.style.minHeight = Math.round(rect.height) + 'px';
+      cardEl.style.maxHeight = maxH + 'px';
+
+      let top = Math.round(rect.top);
+      const cardH = Math.min(Math.max(cardEl.scrollHeight || 0, rect.height), maxH);
+      if (top + cardH > window.innerHeight - 36) {
+        top = Math.max(16, window.innerHeight - cardH - 36);
+      }
+      if (top < 16) top = 16;
+      cardEl.style.top = top + 'px';
+    }
+
+    function clearCardPlacement(cardEl) {
+      if (!cardEl) return;
+      cardEl.style.left = '';
+      cardEl.style.top = '';
+      cardEl.style.width = '';
+      cardEl.style.minWidth = '';
+      cardEl.style.maxWidth = '';
+      cardEl.style.minHeight = '';
+      cardEl.style.maxHeight = '';
+      cardEl.style.visibility = '';
+      cardEl.style.boxSizing = '';
+    }
+
+    function syncOpenCardPosition() {
+      if (pageEl && !pageEl.classList.contains('panel-open')) {
+        measureActionsRect();
+      }
+      if (!isDesktopSplit()) {
+        clearCardPlacement(formCardEl);
+        clearCardPlacement(hallCardEl);
+        return;
+      }
+      if (formOverlay.classList.contains('active')) placeCardOnRightPanel(formCardEl);
+      if (hallOverlay.classList.contains('active')) placeCardOnRightPanel(hallCardEl);
+    }
+
+    window.addEventListener('resize', () => {
+      cachedActionsRect = null;
+      if (pageEl && !pageEl.classList.contains('panel-open')) measureActionsRect();
+      syncOpenCardPosition();
+    });
+    window.addEventListener('load', () => measureActionsRect());
+    setTimeout(() => measureActionsRect(), 100);
+
+    function setPanelOpen(open) {
+      if (!pageEl) return;
+      pageEl.classList.toggle('panel-open', !!open);
+      if (!titleLineEl) return;
+
+      const wantLegend = !!open;
+      const isLegend = titleLineEl.classList.contains('is-legend');
+      if (wantLegend === isLegend && !titleLineEl.classList.contains('is-fading')) return;
+
+      titleLineEl.classList.add('is-fading');
+      const swap = () => {
+        if (wantLegend) {
+          titleLineEl.classList.add('is-legend');
+          titleLineEl.textContent = TITLE_LEGEND_TEXT;
+        } else {
+          titleLineEl.classList.remove('is-legend');
+          titleLineEl.innerHTML = TITLE_DEFAULT_HTML;
+        }
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            titleLineEl.classList.remove('is-fading');
+          });
+        });
+      };
+      setTimeout(swap, 280);
+    }
+
+    document.getElementById('btnApply').addEventListener('click', () => {
+      measureActionsRect();
+      setPanelOpen(true);
+      hideLightning();
+      successView.classList.remove('active');
+      if (formCloseBtn) formCloseBtn.classList.remove('is-hidden');
+      placeCardOnRightPanel(formCardEl);
+      requestAnimationFrame(() => {
+        formOverlay.classList.add('active');
+        placeCardOnRightPanel(formCardEl);
+      });
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      progressWrap.style.display = 'block';
+
+      const hasDraft = loadFormDraft();
+      if (hasDraft) {
+        applyStateToInputs();
+        const step = Math.min(Math.max(state.currentStep || 1, 1), 6);
+        document.querySelector(`.slide[data-step="${step}"]`).classList.add('active');
+        goToStep(step);
+      } else {
+        state.nickname = ''; state.gameUid = ''; state.age = ''; state.reason = ''; state.tournament = '';
+        state.currentStep = 1;
+        applyStateToInputs();
+        document.querySelector('.slide[data-step="1"]').classList.add('active');
+        goToStep(1);
+      }
+    });
+
+    function closeFormToMain(saveDraft) {
+      if (saveDraft) saveFormDraft();
+      formOverlay.classList.remove('active');
+      setTimeout(() => clearCardPlacement(formCardEl), 160);
+      setPanelOpen(false);
+      showLightning();
+      document.documentElement.classList.remove('keyboard-open');
+      document.body.classList.remove('keyboard-open');
+      if (formCloseBtn) formCloseBtn.classList.remove('is-hidden');
+    }
+
+    document.getElementById('formClose').addEventListener('click', () => {
+      closeFormToMain(true);
+    });
+
+    document.getElementById('btnBackMain').addEventListener('click', () => {
+      closeFormToMain(false);
+    });
+
+    document.getElementById('btnHall').addEventListener('click', () => {
+      measureActionsRect();
+      setPanelOpen(true);
+      hideLightning();
+      placeCardOnRightPanel(hallCardEl);
+      requestAnimationFrame(() => {
+        hallOverlay.classList.add('active');
+        placeCardOnRightPanel(hallCardEl);
+      });
+      loadHallOfFame();
+    });
+
+    document.getElementById('hallClose').addEventListener('click', () => {
+      hallOverlay.classList.remove('active');
+      setTimeout(() => clearCardPlacement(hallCardEl), 160);
+      setPanelOpen(false);
+      showLightning();
+    });
+
+    document.querySelectorAll('.btn-next').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const next = +btn.dataset.next;
+        const current = state.currentStep;
+        if (validateStep(current)) {
+          goToStep(next);
+        }
+      });
+    });
+    document.querySelectorAll('.btn-prev').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const prev = +btn.dataset.prev;
+        if (prev) goToStep(prev);
+      });
+    });
+
+    document.getElementById('ynYes').addEventListener('click', () => {
+      state.tournament = '예';
+      document.getElementById('ynYes').classList.add('selected-yes');
+      document.getElementById('ynNo').classList.remove('selected-no');
+      hideError('err5');
+      saveFormDraft();
+    });
+    document.getElementById('ynNo').addEventListener('click', () => {
+      state.tournament = '아니요';
+      document.getElementById('ynNo').classList.add('selected-no');
+      document.getElementById('ynYes').classList.remove('selected-yes');
+      hideError('err5');
+      saveFormDraft();
+    });
+
+    document.getElementById('gameUid').addEventListener('input', function () {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      hideError('err2');
+      saveFormDraft();
+    });
+    document.getElementById('nickname').addEventListener('input', () => {
+      hideError('err1');
+      saveFormDraft();
+    });
+    document.getElementById('ageInput').addEventListener('input', () => {
+      hideError('err3');
+      saveFormDraft();
+    });
+    document.getElementById('reason').addEventListener('input', () => {
+      hideError('err4');
+      saveFormDraft();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || !formOverlay.classList.contains('active')) return;
+      const activeSlide = document.querySelector('.slide.active');
+      if (!activeSlide) return;
+      const step = +activeSlide.dataset.step;
+      if (step === 6) return;
+
+      const isTextarea = e.target.tagName === 'TEXTAREA';
+      if (isTextarea) {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          const nextBtn = activeSlide.querySelector('.btn-next');
+          if (nextBtn) nextBtn.click();
+        }
+        return;
+      }
+      e.preventDefault();
+      const nextBtn = activeSlide.querySelector('.btn-next');
+      if (nextBtn) nextBtn.click();
+    });
+
+    (function setupKeyboardAwareScroll() {
+      const inputs = document.querySelectorAll('.form-input, .form-textarea');
+      let keyboardOpen = false;
+
+      function setKeyboardOpen(open) {
+        keyboardOpen = open;
+        document.documentElement.classList.toggle('keyboard-open', open);
+        document.body.classList.toggle('keyboard-open', open);
+      }
+
+      inputs.forEach(el => {
+        el.addEventListener('focus', () => {
+          setKeyboardOpen(true);
+          setTimeout(() => {
+            try {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+            } catch (_) {
+              el.scrollIntoView(true);
+            }
+          }, 300);
+        });
+        el.addEventListener('blur', () => {
+          setTimeout(() => {
+            const active = document.activeElement;
+            const stillInForm = active && (active.classList.contains('form-input') || active.classList.contains('form-textarea'));
+            if (!stillInForm) setKeyboardOpen(false);
+          }, 150);
+        });
+      });
+
+      if (window.visualViewport) {
+        let lastHeight = window.visualViewport.height;
+        window.visualViewport.addEventListener('resize', () => {
+          const h = window.visualViewport.height;
+          if (h < lastHeight - 80) {
+            setKeyboardOpen(true);
+          } else if (h > lastHeight + 60 && !document.activeElement?.matches?.('.form-input, .form-textarea')) {
+            setKeyboardOpen(false);
+          }
+          lastHeight = h;
+        });
+      }
+    })();
+
+    document.getElementById('btnSubmit').addEventListener('click', async () => {
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>처리 중...';
+
+      const payload = {
+        nickname: state.nickname,
+        gameUid: state.gameUid,
+        age: state.age,
+        reason: state.reason,
+        tournament: state.tournament,
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        if (!GAS_ENDPOINT || GAS_ENDPOINT.includes('YOUR_GAS')) {
+          await new Promise(r => setTimeout(r, 800));
+        } else {
+          await fetch(GAS_ENDPOINT, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        clearFormDraft();
+
+        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+        progressWrap.style.display = 'none';
+        if (formCloseBtn) formCloseBtn.classList.add('is-hidden');
+        successView.classList.add('active');
+        requestAnimationFrame(() => placeCardOnRightPanel(formCardEl));
+      } catch (err) {
+        console.error(err);
+        alert('제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        btn.disabled = false;
+        btn.textContent = '가입 신청하기';
+      }
+    });
+
+    document.addEventListener('contextmenu', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      e.preventDefault();
+    });
+    document.addEventListener('selectstart', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      e.preventDefault();
+    });
+    document.addEventListener('dragstart', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>
