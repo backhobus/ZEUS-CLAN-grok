@@ -781,11 +781,13 @@
 
     /* ===== 반응형 ===== */
     @media (max-width: 480px) {
-      .logo-wrap { width: 140px; height: 140px; }
+      .logo-wrap { width: 190px; height: 190px; }
       .clan-name { font-size: 1.55rem; letter-spacing: 0.14em; }
       .title-line { font-size: 0.86rem; }
-      .btn-main { padding: 18px 12px; font-size: 0.92rem; }
-      .btn-main i { font-size: 1.35rem; }
+      /* 버튼은 작게 줄이지 않고 높이 유지해 화면을 알차게 */
+      .btn-main { padding: 26px 14px; font-size: 0.96rem; }
+      .btn-main i { font-size: 1.6rem; }
+      .btn-apply { padding: 30px 14px; }
       .form-card { padding: 24px 16px 20px; }
       .slide-title { font-size: 1.05rem; }
       .form-input::placeholder,
@@ -800,12 +802,48 @@
       .nav-row.nav-first { grid-template-columns: 1fr; }
     }
 
-    /* 모바일 메인 화면: 로고와 메뉴 묶음을 화면 중앙 쪽으로 아래 이동 */
+    /* 모바일 메인 화면: 로고 확대, 버튼 약간 아래, 푸터 하단(겹침 방지) */
     @media (max-width: 767px) {
-      .header,
+      .page {
+        padding-bottom: 48px;
+      }
+      .logo-wrap {
+        width: 210px;
+        height: 210px;
+        margin-bottom: 14px;
+      }
+      .header {
+        position: relative;
+        top: clamp(40px, 6vh, 72px);
+      }
       .right-panel {
         position: relative;
-        top: clamp(64px, 12vh, 120px);
+        top: clamp(48px, 7vh, 84px);
+      }
+      .main-actions {
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+      .btn-main {
+        padding: 26px 16px;
+        gap: 12px;
+        font-size: 1rem;
+      }
+      .btn-main i {
+        font-size: 1.65rem;
+      }
+      .btn-apply {
+        padding: 30px 16px;
+      }
+      .footer {
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        margin-top: 0;
+        padding-top: 0;
+        z-index: 120;
+        pointer-events: none;
       }
     }
 
